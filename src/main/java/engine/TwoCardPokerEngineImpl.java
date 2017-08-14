@@ -45,9 +45,6 @@ public class TwoCardPokerEngineImpl implements Engine {
 
 		strategy0 = summaryStrategyFileAddress.substring(summaryStrategyFileAddress.lastIndexOf("\\")+1);
 		strategy1 = summaryStrategyFileAddress.substring(conventionalStrategyFileAddress.lastIndexOf("\\")+1);
-		
-		Integer[] playerArray = {0,1};
-		pot=new Pot(playerArray);
 
 	}
 
@@ -172,6 +169,8 @@ public class TwoCardPokerEngineImpl implements Engine {
 
 	@Override
 	public void postBlinds() {
+		Integer[] playerArray = {0,1};
+		pot=new Pot(playerArray);
 		pot.addBet(0, 1);
 		pot.addBet(1, 2);
 		

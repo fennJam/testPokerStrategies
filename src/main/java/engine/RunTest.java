@@ -15,9 +15,13 @@ public class RunTest {
 
 //	500iterationsSummaryStrategy
 	
-	static final String STRATEGY1 = "C:\\Users\\James\\Dropbox\\StrategyMaps\\500iterationsConventionalStrategy.json";
-	static final String STRATEGY0 = "C:\\Users\\James\\Dropbox\\StrategyMaps\\500iterationsConventionalStrategy.json";
+//	static final String STRATEGY1 = "C:\\Users\\James\\Dropbox\\StrategyMaps\\500iterationsConventionalStrategy.json";
+//	static final String STRATEGY0 = "C:\\Users\\James\\Dropbox\\StrategyMaps\\500iterationsConventionalStrategy.json";
 
+	static final String STRATEGY1 = "C:\\Users\\fennell1\\Dropbox\\StrategyMaps\\500iterationsConventionalStrategy.json";
+	static final String STRATEGY0 = "C:\\Users\\fennell1\\Dropbox\\StrategyMaps\\500iterationsConventionalStrategy.json";
+
+	
 	public static void main(String[] args) throws Exception {
 		int iterations = 2;
 

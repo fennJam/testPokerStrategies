@@ -28,22 +28,12 @@ public abstract class TwoCardPlayer implements Player {
 	Hand singleCardHand;
 
 	@Override
-	public PokerAction getMove(Board board, List<PokerAction>actionsTaken){
-		double random = Math.random();
+	public PokerAction getMove(Board board, List<PokerAction> actionsTaken) {
 
-		String nodeId = getNodeId(singleCardHand, board,actionsTaken);
+		String nodeId = getNodeId(singleCardHand, board, actionsTaken);
 		System.out.println(nodeId);
-		double[] actionWeightings = strategyMap.get(nodeId);
-		int action = 0;
-		double totalWeight = 0;
-		for (double weight : actionWeightings) {
-			totalWeight += weight;
-			if (totalWeight > random) {
-				break;
-			}
-			action++;
-		}
-		return potentailActions[action];
+
+		return getMove(nodeId);
 
 	}
 
@@ -84,8 +74,23 @@ public abstract class TwoCardPlayer implements Player {
 		this.singleCardHand = singleCardHand;
 	}
 
+	@Override
+	public PokerAction getMove(String nodeId) {
+		double random = Math.random();
+		double[] actionWeightings = strategyMap.get(nodeId);
+		int action = 0;
+		double totalWeight = 0;
+		for (double weight : actionWeightings) {
+			totalWeight += weight;
+			if (totalWeight > random) {
+				break;
+			}
+			action++;
+		}
+		return potentailActions[action];
+
+	}
+
 	protected abstract String getNodeId(Hand hand, Board board, List<PokerAction> actionsTaken);
-
-
 
 }

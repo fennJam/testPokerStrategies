@@ -13,6 +13,8 @@ public interface Player {
 
 public PokerAction getMove(Board board, List<PokerAction>actionsTaken);
 
+public PokerAction getMove(String nodeId);
+
 public void setStrategy(Map<String, double[]> strategyMap);
 
 public Map<String, double[]> importStrategyMapFromJSONFile(String fileAddress);
