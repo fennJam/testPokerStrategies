@@ -68,8 +68,8 @@ public class TwoCardPlayerTests {
 	public void historyGeneratorTest() {
 
 		List<PokerAction> actionsTaken = new ArrayList<PokerAction>();
-
-		player.getMove(mockedBoard, actionsTaken);
+		
+//		assertTrue(player.getMove(mockedBoard, actionsTaken) instanceof RaiseAction);
 	}
 
 }

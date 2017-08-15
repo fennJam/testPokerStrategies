@@ -62,7 +62,7 @@ public class Pot {
 	 * @return
 	 */
 	public Pot addBet(Integer player, int size) {
-
+//		System.out.println("addBet player" + player + " bet " + size);
 		playerBetSizes.put(player, playerBetSizes.get(player) + size);
 		roundPot += size;
 		totalPot += size;
@@ -136,7 +136,7 @@ public class Pot {
 	public Entry<Integer, Integer> getLastBet() {
 		return lastBet;
 	}
-	
+
 	public Integer getLastBetValue() {
 		return lastBet.getValue();
 	}
@@ -156,5 +156,5 @@ public class Pot {
 	public String toString() {
 		return playerBetSizes.toString();
 	}
-	
+
 }

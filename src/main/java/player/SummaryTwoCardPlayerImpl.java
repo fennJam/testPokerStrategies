@@ -12,6 +12,16 @@ import poker.actions.PokerAction;
 
 public class SummaryTwoCardPlayerImpl  extends TwoCardPlayer {
 
+	public SummaryTwoCardPlayerImpl(String strategyFileAddress){
+		importStrategyMapFromJSONFile(strategyFileAddress);
+	}
+	
+	
+	public SummaryTwoCardPlayerImpl() {
+
+	}
+
+
 	@Override
 	protected String getNodeId(Hand hand, Board board, List<PokerAction> actionsTaken) {
 		String unSummarisedActionsTaken = getActionsTakenString(actionsTaken).replaceAll(",", "");

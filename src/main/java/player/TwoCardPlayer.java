@@ -31,7 +31,7 @@ public abstract class TwoCardPlayer implements Player {
 	public PokerAction getMove(Board board, List<PokerAction> actionsTaken) {
 
 		String nodeId = getNodeId(singleCardHand, board, actionsTaken);
-		System.out.println(nodeId);
+//		System.out.println(nodeId);
 
 		return getMove(nodeId);
 

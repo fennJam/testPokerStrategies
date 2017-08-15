@@ -3,6 +3,7 @@ package engine;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +28,13 @@ public class TwoCardPokerEngineImpl implements Engine {
 
 	Board board;
 	Pot pot;
+
 	Player[] players = new Player[2];
 	PokerGameType pokerGameType = PokerGameType.TWO_CARD;
 	String strategy0;
 	String strategy1;
 
-	TwoCardPokerEngineImpl(String summaryStrategyFileAddress, String conventionalStrategyFileAddress) {
+	public TwoCardPokerEngineImpl(String summaryStrategyFileAddress, String conventionalStrategyFileAddress) {
 
 		Player player0 = new SummaryTwoCardPlayerImpl();
 		Player player1 = new ConventionalTwoCardPlayerImpl();
@@ -43,8 +45,15 @@ public class TwoCardPokerEngineImpl implements Engine {
 		players[0] = player0;
 		players[1] = player1;
 
-		strategy0 = summaryStrategyFileAddress.substring(summaryStrategyFileAddress.lastIndexOf("\\")+1);
-		strategy1 = summaryStrategyFileAddress.substring(conventionalStrategyFileAddress.lastIndexOf("\\")+1);
+		strategy0 = summaryStrategyFileAddress.substring(summaryStrategyFileAddress.lastIndexOf("\\") + 1);
+		strategy1 = summaryStrategyFileAddress.substring(conventionalStrategyFileAddress.lastIndexOf("\\") + 1);
+
+	}
+	
+	public TwoCardPokerEngineImpl(Player player0, Player player1) {
+
+		players[0] = player0;
+		players[1] = player1;
 
 	}
 
@@ -63,6 +72,7 @@ public class TwoCardPokerEngineImpl implements Engine {
 
 	@Override
 	public int[] playGame(List<PokerAction> actionsTaken) {
+
 		int playerToAct = getPlayerToAct(actionsTaken);
 
 		if (actionsTaken.contains(FoldAction.getInstance())) {
@@ -94,44 +104,32 @@ public class TwoCardPokerEngineImpl implements Engine {
 
 	}
 
-	private void performRaiseAction(int playerToAct, RaiseAction raiseAction, List<PokerAction> actionsTaken) {
-		int amountToCall = pot.getPlayersContributionToPot(playerToAct)
-				- pot.getPlayersContributionToPot(1-playerToAct);
+	@Override
+	public List<PokerAction> performRaiseAction(int playerToAct, RaiseAction raiseAction,
+			List<PokerAction> actionsTaken) {
+		// match the call first
+		int amountToCall = pot.getPlayersContributionToPot(1 - playerToAct)
+				- pot.getPlayersContributionToPot(playerToAct);
 		pot.addBet(playerToAct, amountToCall);
+		// then raise
 		pot.addBet(playerToAct, raiseAction.getRaiseAmount());
 		actionsTaken.add(raiseAction);
-	}
-
-	private void performCallAction(int playerToAct, List<PokerAction> actionsTaken) {
-		int amountToCall = pot.getPlayersContributionToPot(playerToAct)
-				- pot.getPlayersContributionToPot(1-playerToAct);
-		pot.addBet(playerToAct, amountToCall);
-		actionsTaken.add(CallAction.getInstance());
-	}
-
-	private void performFoldAction(int playerToAct, List<PokerAction> actionsTaken) {
-		actionsTaken.add(FoldAction.getInstance());
+		return actionsTaken;
 	}
 
 	@Override
-	public void printResult(int [] payOffs) {
-		BufferedWriter br;
-		try {
-			br = new BufferedWriter(new FileWriter(strategy0+" - vs - "+strategy1+".csv"));
-		
-		StringBuilder sb = new StringBuilder();
-		for (int element : payOffs) {
-			sb.append(element);
-			sb.append(",");
-		}
+	public List<PokerAction> performCallAction(int playerToAct, List<PokerAction> actionsTaken) {
+		int amountToCall = pot.getPlayersContributionToPot(1 - playerToAct)
+				- pot.getPlayersContributionToPot(playerToAct);
+		pot.addBet(playerToAct, amountToCall);
+		actionsTaken.add(CallAction.getInstance());
+		return actionsTaken;
+	}
 
-		br.newLine();
-		br.write(sb.toString());
-		br.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	@Override
+	public List<PokerAction> performFoldAction(int playerToAct, List<PokerAction> actionsTaken) {
+		actionsTaken.add(FoldAction.getInstance());
+		return actionsTaken;
 	}
 
 	@Override
@@ -158,22 +156,34 @@ public class TwoCardPokerEngineImpl implements Engine {
 
 	private int getPlayerToAct(List<PokerAction> actionsTaken) {
 		// get number of actions since last instance of deal action
-		int noOfActions = 0;
-		actionsTaken.lastIndexOf(DealAction.getInstance());
-		for (int action = actionsTaken.lastIndexOf(DealAction.getInstance()) + 1; action < actionsTaken
-				.size(); action++) {
-			noOfActions++;
-		}
+		int noOfActions = actionsTaken.size() - actionsTaken.lastIndexOf(DealAction.getInstance()) + 1;
+
 		return noOfActions % 2;
 	}
 
 	@Override
 	public void postBlinds() {
-		Integer[] playerArray = {0,1};
-		pot=new Pot(playerArray);
+		Integer[] playerArray = { 0, 1 };
+		pot = new Pot(playerArray);
 		pot.addBet(0, 1);
 		pot.addBet(1, 2);
-		
+
+	}
+
+	@Override
+	public void resetGame() {
+		this.board = null;
+		this.pot = null;
+		this.players = new Player[2];
+		this.pokerGameType = PokerGameType.TWO_CARD;
+		this.strategy0 = null;
+		this.strategy1 = null;
+
+	}
+
+	@Override
+	public Pot getPot() {
+		return pot;
 	}
 
 }
