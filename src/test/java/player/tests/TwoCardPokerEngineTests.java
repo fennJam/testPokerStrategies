@@ -12,6 +12,7 @@ import engine.Engine;
 import engine.TwoCardPokerEngineImpl;
 import poker.Card;
 import poker.actions.CallAction;
+import poker.actions.DealAction;
 import poker.actions.FoldAction;
 import poker.actions.PokerAction;
 import poker.actions.RaiseAction;
@@ -67,6 +68,30 @@ public class TwoCardPokerEngineTests {
 		assertEquals(6,engine.getPot().getPlayersContributionToPot(0));
 		assertEquals(2,engine.getPot().getPlayersContributionToPot(1));
 		assertEquals(8,engine.getPot().getTotalPotSize());
+		
+		
+		
+	}
+	
+	@Test
+	public void getPlayertoActTest() {
+		
+		List<PokerAction> actionsTaken = new ArrayList<PokerAction>();
+		RaiseAction raise4 = (RaiseAction)raise4Action;
+		Card[] cardCombo = {new Card(10),new Card(20),new Card(30)};
+		engine.dealCards(cardCombo);
+		engine.postBlinds();
+		actionsTaken.add(DealAction.getInstance());
+		assertEquals(0,engine.getPlayerToAct(actionsTaken));
+		assertTrue(engine.performRaiseAction(0, raise4, actionsTaken).get(1) instanceof RaiseAction);
+		assertEquals(1,engine.getPlayerToAct(actionsTaken));
+		assertTrue(engine.performCallAction(0, actionsTaken).get(2) instanceof CallAction);
+		actionsTaken.add(DealAction.getInstance());
+		assertEquals(0,engine.getPlayerToAct(actionsTaken));
+		assertTrue(engine.performRaiseAction(0, raise4, actionsTaken).get(1) instanceof RaiseAction);
+		assertEquals(1,engine.getPlayerToAct(actionsTaken));
+		
+	
 		
 		
 		

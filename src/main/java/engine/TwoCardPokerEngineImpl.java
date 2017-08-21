@@ -1,9 +1,5 @@
 package engine;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +124,14 @@ public class TwoCardPokerEngineImpl implements Engine {
 
 	@Override
 	public List<PokerAction> performFoldAction(int playerToAct, List<PokerAction> actionsTaken) {
+		int amountToCall = pot.getPlayersContributionToPot(1 - playerToAct)
+				- pot.getPlayersContributionToPot(playerToAct);
+		
+		if(amountToCall>0){
 		actionsTaken.add(FoldAction.getInstance());
+		}else{
+			actionsTaken.add(CallAction.getInstance());
+		}
 		return actionsTaken;
 	}
 
@@ -154,7 +157,8 @@ public class TwoCardPokerEngineImpl implements Engine {
 
 	}
 
-	private int getPlayerToAct(List<PokerAction> actionsTaken) {
+	@Override
+	public int getPlayerToAct(List<PokerAction> actionsTaken) {
 		// get number of actions since last instance of deal action
 		int noOfActions = actionsTaken.size() - actionsTaken.lastIndexOf(DealAction.getInstance()) + 1;
 

@@ -7,8 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.math3.stat.inference.TTest;
+
+import player.CallPlayerImpl;
 import player.ConventionalTwoCardPlayerImpl;
 import player.Player;
+import player.RandomActionPlayerImpl;
 import player.SummaryTwoCardPlayerImpl;
 import poker.Card;
 import poker.actions.DealAction;
@@ -23,20 +27,28 @@ public class RunTest {
 	// static final String STRATEGY0 =
 	// "C:\\Users\\James\\Dropbox\\StrategyMaps\\500iterationsConventionalStrategy.json";
 
+	
+	static final String STRATEGY0 = "C:\\Users\\fennell1\\Dropbox\\StrategyMaps\\2000iterationsConventionalStrategy.json";
 	static final String STRATEGY1 = "C:\\Users\\fennell1\\Dropbox\\StrategyMaps\\2000iterationsConventionalStrategy.json";
-	static final String STRATEGY0 = "C:\\Users\\fennell1\\Dropbox\\StrategyMaps\\2000iterationsSummaryStrategy.json";
+//	static final String STRATEGY0 = "C:\\Users\\fennell1\\Dropbox\\StrategyMaps\\1000iterationsSummaryStrategy.json";
 
 	public static void main(String[] args) throws Exception {
-		int iterations = 1250;
-		List<Integer> payOffsList = new ArrayList<Integer>();
-		for (int i = 0; i < iterations; i++) {
-
-			Player player0 = new SummaryTwoCardPlayerImpl(STRATEGY0);
+		
+			List<Integer> payOffsList = new ArrayList<Integer>();
+//			Player player0 = new SummaryTwoCardPlayerImpl(STRATEGY0);
+			Player player0 = new ConventionalTwoCardPlayerImpl(STRATEGY0);
 			Player player1 = new ConventionalTwoCardPlayerImpl(STRATEGY1);
 
+			int count = 0;
+			
+			
+			
 			Engine testEngine = new TwoCardPokerEngineImpl(player0, player1);
 			Card[][] validCardCombos = getListOfValidCardCombinations();
+			
+			for(int i=0;i<200;i++){
 			for (Card[] cardCombo : validCardCombos) {
+				count++;
 				List<PokerAction> actionList = new ArrayList<PokerAction>();
 				testEngine.dealCards(cardCombo);
 				testEngine.postBlinds();
@@ -45,23 +57,39 @@ public class RunTest {
 
 				int player0Result = payOffs[0] - payOffs[1];
 				payOffsList.add(player0Result);
+				
+				
+//				if(count == 10){
+//					break;
+//				}
 			}
 
 			testEngine = new TwoCardPokerEngineImpl(player1, player0);
 			for (Card[] cardCombo : validCardCombos) {
+				count++;
 				List<PokerAction> actionList = new ArrayList<PokerAction>();
 				testEngine.dealCards(cardCombo);
 				testEngine.postBlinds();
 				actionList.add(DealAction.getInstance());
 				int[] payOffs = testEngine.playGame(actionList);
 
-				int player0Result = payOffs[0] - payOffs[1];
-				payOffsList.add(-player0Result);
+				int player1Result = payOffs[1] - payOffs[0];
+				payOffsList.add(player1Result);
+				
+//				if(count == 20){
+//					break;
+//				}
 			}
-		}
-		printResult(payOffsList);
-	}
+			}
+			printResult(payOffsList);
+			int sum2 = payOffsList.stream().mapToInt(Integer::intValue).sum();
+			System.out.println("Sum2 : "+sum2+" count"+count);
+			
+			double[] doubleArray = convertIntListTodoubleArray(payOffsList);
+			System.out.println("T-test : "+new TTest().tTest(0.0, doubleArray));
 
+	}
+			
 	public void printResult(int[] payOffs) {
 		BufferedWriter br;
 		try {
@@ -134,20 +162,29 @@ public class RunTest {
 	public static void printResult(List<Integer> payOffs) {
 		BufferedWriter br;
 		try {
-			br = new BufferedWriter(new FileWriter(
-					"2000iterationsConventionalStrategy.json  - vs - 2000iterationsSummaryStrategy.json.csv"));
+			br = new BufferedWriter(new FileWriter(("ConventionalTwoCardPlayerImpl500 - vs - Call.csv")));
 
 			StringBuilder sb = new StringBuilder();
 			for (int payOff : payOffs) {
 				sb.append(payOff + ",");
 			}
-
+			br.newLine();
 			br.write(sb.toString());
+			
 			br.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	
+	private static double[] convertIntListTodoubleArray(List<Integer> intList){
+		double[] doubleArray = new double[intList.size()];
+		for(int index=0 ;index<intList.size();index++ ){
+			doubleArray[index] = Double.valueOf(intList.get(index));
+		}
+		return doubleArray;
 	}
 
 }

@@ -28,5 +28,7 @@ public interface Engine {
 	
 	Pot getPot();
 	
+	public int getPlayerToAct(List<PokerAction> actionsTaken);
+	
 	
 }
